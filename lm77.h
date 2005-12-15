@@ -40,7 +40,7 @@
 static inline u16 LM77_TEMP_TO_REG(int temp)
 {
 	int ntemp = SENSORS_LIMIT(temp, LM77_TEMP_MIN, LM77_TEMP_MAX);
-	ntemp = (ntemp / 500) << 3;
+	ntemp = (ntemp / 5000) << 3;
 
 	/* set all sign bits if necessary */
 	if (ntemp & 0x200)
@@ -57,5 +57,5 @@ static inline int LM77_TEMP_FROM_REG(u16 reg)
 	if (val & 0x200)
 		val -= 1024;
 	    
-	return (val *= 500);
+	return (val *= 5000);
 }
