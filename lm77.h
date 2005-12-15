@@ -30,21 +30,32 @@
 /* straight from the datasheet */
 #define LM77_TEMP_MIN (-55000)
 #define LM77_TEMP_MAX 125000
-
-/* mask for getting the temperature readings right */
 #define LM77_TEMP_MASK 0x1ff8
 
-/* In the temperature registers, the low 3 bits are not part of the
-   temperature values; they are the status bits. */
+/* In the temperature registers the lowest 3 bits are not part of the
+ * temperature values (either unused or representing alarm status,
+ * depending on the register). The highest 4 bits are either all 1 or
+ * all 0 and represent the sign.
+ */
 static inline u16 LM77_TEMP_TO_REG(int temp)
 {
 	int ntemp = SENSORS_LIMIT(temp, LM77_TEMP_MIN, LM77_TEMP_MAX);
-	return (u16)((ntemp / 5000) * 8);
+	ntemp = (ntemp / 500) << 3;
+
+	/* set all sign bits if necessary */
+	if (ntemp & 0x200)
+		ntemp |= 0xe000;
+	
+	return (u16)ntemp;
 }
 
 static inline int LM77_TEMP_FROM_REG(u16 reg)
 {
-	/* use integer division instead of equivalent right shift to
-	   guarantee arithmetic shift and preserve the sign */
-	return (int)(((reg & LM77_TEMP_MASK) / 8) * 5000);
+	int val = ((reg & LM77_TEMP_MASK) >> 3);
+	
+	/* adjust for signednes if necessary */
+	if (val & 0x200)
+		val -= 1024;
+	    
+	return (val *= 500);
 }
