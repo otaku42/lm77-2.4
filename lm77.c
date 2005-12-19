@@ -507,19 +507,19 @@ void lm77_proc_temp(struct i2c_client *client, int operation, int ctl_name,
 
 			if (new[0] != LM77_SC_NOTSET) {
 				data->temp_min = new[0];
-				lm77_write_value(client, LM77_REG_T_LOW, new[0]);
+				lm77_write_value(client, LM77_REG_T_LOW, LM77_TEMP_TO_REG(new[0]));
 			}
 			if (new[1] != LM77_SC_NOTSET) {
 				data->temp_max = new[1];
-				lm77_write_value(client, LM77_REG_T_HIGH, new[1]);
+				lm77_write_value(client, LM77_REG_T_HIGH, LM77_TEMP_TO_REG(new[1]));
 			}
 			if (new[2] != LM77_SC_NOTSET) {
 				data->temp_crit = new[2];
-				lm77_write_value(client, LM77_REG_T_CRIT, new[2]);
+				lm77_write_value(client, LM77_REG_T_CRIT, LM77_TEMP_TO_REG(new[2]));
 			}
 			if (new[3] != LM77_SC_NOTSET) {
 				data->temp_max = new[3];
-				lm77_write_value(client, LM77_REG_T_HYST, new[3]);
+				lm77_write_value(client, LM77_REG_T_HYST, LM77_TEMP_TO_REG(new[3]));
 			}
 
 			printk(KERN_INFO "lm77: changes applied.\n");
