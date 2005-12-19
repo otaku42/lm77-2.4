@@ -53,10 +53,10 @@ SENSORS_INSMOD_1(lm77);
 /* The LM77 registers */
 #define LM77_REG_TEMP 0x00		/* Current temperature (read-only) */
 #define LM77_REG_CONF 0x01		/* Configuration (read-write) */
-#define LM77_REG_TEMP_HYST 0x02		/* Hysteresis (read-write) */
-#define LM77_REG_TEMP_CRIT 0x03		/* Critical temperature (read-write) */
-#define LM77_REG_TEMP_MIN 0x04		/* Minimum temperature (read-write) */
-#define LM77_REG_TEMP_MAX 0x05		/* Maximum temperature (read-write) */
+#define LM77_REG_T_HYST 0x02		/* Hysteresis (read-write) */
+#define LM77_REG_T_CRIT 0x03		/* Critical temperature (read-write) */
+#define LM77_REG_T_LOW 0x04		/* Minimum temperature (read-write) */
+#define LM77_REG_T_HIGH 0x05		/* Maximum temperature (read-write) */
 
 /* LM77 configuration bits (for LM77_REG_CONF */
 #define LM77_CONF_SHUTDOWN 0x1		/* Shutdown */
@@ -386,16 +386,16 @@ static void lm77_update_client(struct i2c_client *client)
 		                                       LM77_REG_TEMP));
 		data->temp_hyst =
 		    LM77_TEMP_FROM_REG(lm77_read_value(client,
-		                                       LM77_REG_TEMP_HYST));
+		                                       LM77_REG_T_HYST));
 		data->temp_crit =
 		    LM77_TEMP_FROM_REG(lm77_read_value(client,
-		                                       LM77_REG_TEMP_CRIT));
+		                                       LM77_REG_T_CRIT));
 		data->temp_min =
 		    LM77_TEMP_FROM_REG(lm77_read_value(client,
-		                                       LM77_REG_TEMP_MIN));
+		                                       LM77_REG_T_LOW));
 		data->temp_max =
 		    LM77_TEMP_FROM_REG(lm77_read_value(client,
-		                                       LM77_REG_TEMP_MAX));
+		                                       LM77_REG_T_HIGH));
 		data->alarms =
 		    lm77_read_value(client, LM77_REG_TEMP) & LM77_ALARM_MASK;
 		    
@@ -507,19 +507,19 @@ void lm77_proc_temp(struct i2c_client *client, int operation, int ctl_name,
 
 			if (new[0] != LM77_SC_NOTSET) {
 				data->temp_min = new[0];
-				lm77_write_value(client, LM77_REG_TEMP_MIN, new[0]);
+				lm77_write_value(client, LM77_REG_T_LOW, new[0]);
 			}
 			if (new[1] != LM77_SC_NOTSET) {
 				data->temp_max = new[1];
-				lm77_write_value(client, LM77_REG_TEMP_MAX, new[1]);
+				lm77_write_value(client, LM77_REG_T_HIGH, new[1]);
 			}
 			if (new[2] != LM77_SC_NOTSET) {
 				data->temp_crit = new[2];
-				lm77_write_value(client, LM77_REG_TEMP_CRIT, new[2]);
+				lm77_write_value(client, LM77_REG_T_CRIT, new[2]);
 			}
 			if (new[3] != LM77_SC_NOTSET) {
 				data->temp_max = new[3];
-				lm77_write_value(client, LM77_REG_TEMP_HYST, new[3]);
+				lm77_write_value(client, LM77_REG_T_HYST, new[3]);
 			}
 
 			printk(KERN_INFO "lm77: changes applied.\n");
@@ -564,10 +564,10 @@ void lm77_proc_reset(struct i2c_client *client, int operation, int ctl_name,
 			 * works even when the conversion is broken
 			*/
 			lm77_write_value(client, LM77_REG_CONF, LM77_DEFAULT_CONF);
-			lm77_write_value(client, LM77_REG_TEMP_MIN, LM77_DEFAULT_T_LOW);
-			lm77_write_value(client, LM77_REG_TEMP_MAX, LM77_DEFAULT_T_HIGH);
-			lm77_write_value(client, LM77_REG_TEMP_CRIT, LM77_DEFAULT_T_CRIT);
-			lm77_write_value(client, LM77_REG_TEMP_HYST, LM77_DEFAULT_T_HYST);
+			lm77_write_value(client, LM77_REG_T_LOW, LM77_DEFAULT_T_LOW);
+			lm77_write_value(client, LM77_REG_T_HIGH, LM77_DEFAULT_T_HIGH);
+			lm77_write_value(client, LM77_REG_T_CRIT, LM77_DEFAULT_T_CRIT);
+			lm77_write_value(client, LM77_REG_T_HYST, LM77_DEFAULT_T_HYST);
 		}
 	}
 }
