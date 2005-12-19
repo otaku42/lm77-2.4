@@ -558,8 +558,6 @@ void lm77_proc_reset(struct i2c_client *client, int operation, int ctl_name,
 		*nrels_mag = 0;
 	else if (operation == SENSORS_PROC_REAL_WRITE) {
 		if ((*nrels_mag >= 1) && (results[0] == 1)) {
-			printk(KERN_NOTICE "lm77: resetting registers to their default values\n");
-
 			/* avoid using LM77_TEMP_TO_REG et al here, so that resetting
 			 * works even when the conversion is broken
 			*/
@@ -568,6 +566,8 @@ void lm77_proc_reset(struct i2c_client *client, int operation, int ctl_name,
 			lm77_write_value(client, LM77_REG_T_HIGH, LM77_DEFAULT_T_HIGH);
 			lm77_write_value(client, LM77_REG_T_CRIT, LM77_DEFAULT_T_CRIT);
 			lm77_write_value(client, LM77_REG_T_HYST, LM77_DEFAULT_T_HYST);
+
+			printk(KERN_NOTICE "lm77: registers reset to their default,\n");
 		}
 	}
 }
