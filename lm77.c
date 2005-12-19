@@ -46,6 +46,10 @@ static unsigned int normal_isa_range[] = { SENSORS_ISA_END };
 /* Insmod parameters */
 SENSORS_INSMOD_1(lm77);
 
+/* Whether or not to compile with debugging extensions */
+#define DEBUG 1
+/* #undef DEBUG */
+
 /* The LM77 registers */
 #define LM77_REG_TEMP 0x00		/* Current temperature (read-only) */
 #define LM77_REG_CONF 0x01		/* Configuration (read-write) */
@@ -60,6 +64,15 @@ SENSORS_INSMOD_1(lm77);
 #define LM77_CONF_TCRITPOL 0x4		/* T_CRIT_A polarity */
 #define LM77_CONF_INTPOL 0x8		/* INT polarity */
 #define LM77_CONF_FAULTQ 0x10		/* Fault queue */
+
+/* LM77 default register values */
+#ifdef DEBUG
+#define LM77_DEFAULT_CONF 0x0
+#define LM77_DEFAULT_T_LOW 0xa0		/* 10 deg celcius */
+#define LM77_DEFAULT_T_HIGH 0x400	/* 64 deg celcius */
+#define LM77_DEFAULT_T_CRIT 0x500	/* 80 deg celcius */
+#define LM77_DEFAULT_T_HYST 0x20	/* 2 deg celcius */
+#endif
 
 /* Misc. defines */
 
@@ -104,6 +117,10 @@ static void lm77_proc_temp(struct i2c_client *client, int operation,
 		      int ctl_name, int *nrels_mag, long *results);
 static void lm77_proc_alarms(struct i2c_client *client, int operation,
 		      int ctl_name, int *nrels_mag, long *results);
+#ifdef DEBUG
+static void lm77_proc_reset(struct i2c_client *client, int operation,
+		      int ctl_name, int *nrels_mag, long *results);
+#endif
 
 /* This is the driver that will be inserted */
 static struct i2c_driver lm77_driver = {
@@ -119,6 +136,9 @@ static struct i2c_driver lm77_driver = {
 #define LM77_SYSCTL_TEMP_CRIT 1201	/* Critical temperature bound */
 #define LM77_SYSCTL_TEMP_HYST 1202	/* Hysteresis */
 #define LM77_SYSCTL_ALARMS 1203		/* Current alarm status */
+#ifdef DEBUG
+#define LM77_SYSCTL_RESET 1204		/* LM77 reset */
+#endif
 
 /* -- SENSORS SYSCTL END -- */
 
@@ -136,6 +156,10 @@ static ctl_table lm77_dir_table_template[] = {
 	 &i2c_sysctl_real, NULL, &lm77_proc_temp},
 	{LM77_SYSCTL_ALARMS, "alarms", NULL, 0, 0644, NULL, &i2c_proc_real,
 	 &i2c_sysctl_real, NULL, &lm77_proc_alarms},
+#ifdef DEBUG
+	{LM77_SYSCTL_RESET, "reset", NULL, 0, 0644, NULL, &i2c_proc_real,
+	 &i2c_sysctl_real, NULL, &lm77_proc_reset},
+#endif
 	{0}
 };
 
@@ -523,9 +547,39 @@ void lm77_proc_alarms(struct i2c_client *client, int operation, int ctl_name,
 	}
 }
 
+#ifdef DEBUG
+void lm77_proc_reset(struct i2c_client *client, int operation, int ctl_name,
+		 int *nrels_mag, long *results)
+{
+	if (operation == SENSORS_PROC_REAL_INFO)
+		*nrels_mag = 0;
+	else if (operation == SENSORS_PROC_REAL_READ)
+		/* nothing to read */
+		*nrels_mag = 0;
+	else if (operation == SENSORS_PROC_REAL_WRITE) {
+		if ((*nrels_mag >= 1) && (results[0] == 1)) {
+			printk(KERN_NOTICE "lm77: resetting registers to their default values\n");
+
+			/* avoid using LM77_TEMP_TO_REG et al here, so that resetting
+			 * works even when the conversion is broken
+			*/
+			lm77_write_value(client, LM77_REG_CONF, LM77_DEFAULT_CONF);
+			lm77_write_value(client, LM77_REG_TEMP_MIN, LM77_DEFAULT_T_LOW);
+			lm77_write_value(client, LM77_REG_TEMP_MAX, LM77_DEFAULT_T_HIGH);
+			lm77_write_value(client, LM77_REG_TEMP_CRIT, LM77_DEFAULT_T_CRIT);
+			lm77_write_value(client, LM77_REG_TEMP_HYST, LM77_DEFAULT_T_HYST);
+		}
+	}
+}
+#endif
+
 static int __init sm_lm77_init(void)
 {
+#ifdef DEBUG
+	printk(KERN_INFO "lm77.o version %s (%s+debug)\n", LM_VERSION, LM_DATE);
+#else
 	printk(KERN_INFO "lm77.o version %s (%s)\n", LM_VERSION, LM_DATE);
+#endif	
 	return i2c_add_driver(&lm77_driver);
 }
 
