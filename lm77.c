@@ -576,9 +576,9 @@ void lm77_proc_reset(struct i2c_client *client, int operation, int ctl_name,
 static int __init sm_lm77_init(void)
 {
 #ifdef DEBUG
-	printk(KERN_INFO "lm77.o version %s (%s+debug)\n", LM_VERSION, LM_DATE);
+	printk(KERN_INFO "lm77.o version %s (%s+debug) - $Revision$\n", LM_VERSION, LM_DATE);
 #else
-	printk(KERN_INFO "lm77.o version %s (%s)\n", LM_VERSION, LM_DATE);
+	printk(KERN_INFO "lm77.o version %s (%s) - $Revision$\n", LM_VERSION, LM_DATE);
 #endif	
 	return i2c_add_driver(&lm77_driver);
 }
