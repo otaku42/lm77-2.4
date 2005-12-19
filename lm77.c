@@ -77,7 +77,7 @@ SENSORS_INSMOD_1(lm77);
 /* Misc. defines */
 
 /* LM77_SC_NOTSET is used to signal that a value of the array that is
- * oassed to the sanity check routine should be regarded as "not given
+ * passed to the sanity check routine should be regarded as "not given
  * by the user"
  */
 #define LM77_SC_NOTSET -99999
