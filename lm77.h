@@ -28,8 +28,8 @@
 #include <linux/i2c-proc.h>
 
 /* straight from the datasheet */
-#define LM77_TEMP_MIN (-55000)
-#define LM77_TEMP_MAX 125000
+#define LM77_TEMP_MIN (-550)
+#define LM77_TEMP_MAX 1250
 #define LM77_TEMP_MASK 0x1ff8
 
 /* In the temperature registers the lowest 3 bits are not part of the
@@ -40,7 +40,7 @@
 static inline u16 LM77_TEMP_TO_REG(int temp)
 {
 	int ntemp = SENSORS_LIMIT(temp, LM77_TEMP_MIN, LM77_TEMP_MAX);
-	ntemp = (ntemp / 5000) << 3;
+	ntemp = (ntemp / 5) << 3;
 
 	/* set all sign bits if necessary */
 	if (ntemp & 0x200)
@@ -57,5 +57,5 @@ static inline int LM77_TEMP_FROM_REG(u16 reg)
 	if (val & 0x200)
 		val -= 1024;
 	    
-	return (val *= 5000);
+	return (val *= 5);
 }
