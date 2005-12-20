@@ -58,7 +58,7 @@ SENSORS_INSMOD_1(lm77);
 #define LM77_REG_T_LOW 0x04		/* Minimum temperature (read-write) */
 #define LM77_REG_T_HIGH 0x05		/* Maximum temperature (read-write) */
 
-/* LM77 configuration bits (for LM77_REG_CONF */
+/* LM77 configuration bits (for LM77_REG_CONF) */
 #define LM77_CONF_SHUTDOWN 0x1		/* Shutdown */
 #define LM77_CONF_INTMODE 0x2		/* Interrupt mode */
 #define LM77_CONF_TCRITPOL 0x4		/* T_CRIT_A polarity */
