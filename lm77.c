@@ -154,7 +154,7 @@ static ctl_table lm77_dir_table_template[] = {
 	 &i2c_sysctl_real, NULL, &lm77_proc_temp},
 	{LM77_SYSCTL_TEMP_HYST, "temp_hyst", NULL, 0, 0644, NULL, &i2c_proc_real,
 	 &i2c_sysctl_real, NULL, &lm77_proc_temp},
-	{LM77_SYSCTL_ALARMS, "alarms", NULL, 0, 0644, NULL, &i2c_proc_real,
+	{LM77_SYSCTL_ALARMS, "alarms", NULL, 0, 0444, NULL, &i2c_proc_real,
 	 &i2c_sysctl_real, NULL, &lm77_proc_alarms},
 #ifdef DEBUG
 	{LM77_SYSCTL_RESET, "reset", NULL, 0, 0644, NULL, &i2c_proc_real,
@@ -541,9 +541,6 @@ void lm77_proc_alarms(struct i2c_client *client, int operation, int ctl_name,
 		lm77_update_client(client);
 		results[0] = data->alarms;
 		*nrels_mag = 1;
-	} else if (operation == SENSORS_PROC_REAL_WRITE) {
-		printk(KERN_NOTICE "lm77: alarms: read-only\n");
-		*nrels_mag = 0;
 	}
 }
 
