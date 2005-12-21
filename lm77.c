@@ -587,7 +587,7 @@ static int __init sm_lm77_init(void)
 #else
 	printk(KERN_INFO "lm77.o version %s (%s)\n", LM_VERSION, LM_DATE);
 #endif
-	printk(KERN_INFO "lm87.o $Id$\n");
+	printk(KERN_INFO "lm77.o $Id$\n");
 	return i2c_add_driver(&lm77_driver);
 }
 
