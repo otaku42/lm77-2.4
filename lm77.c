@@ -47,8 +47,8 @@ static unsigned int normal_isa_range[] = { SENSORS_ISA_END };
 SENSORS_INSMOD_1(lm77);
 
 /* Whether or not to compile with debugging extensions */
-#define DEBUG 1
-/* #undef DEBUG */
+/* #define DEBUG 1 */
+#undef DEBUG
 
 /* The LM77 registers */
 #define LM77_REG_TEMP 0x00		/* Current temperature (read-only) */
