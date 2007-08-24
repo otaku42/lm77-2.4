@@ -1,7 +1,10 @@
 /*
     lm77.c - Part of lm_sensors, Linux kernel modules for hardware
              monitoring
-    Copyright (c) 2005  Michael Renzmann <mrenzmann@otaku42.de>
+    Copyright (c) 2005 - 2007  Michael Renzmann <mrenzmann@otaku42.de>
+
+    The backport is sponsored by:
+    true global communications GmbH, http://www.tgc.de
     
     Heavily based on lm77.c for kernel 2.6.x, which is:
     Copyright (c) 2004  Andras BALI <drewie@freemail.hu>
