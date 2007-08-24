@@ -47,8 +47,8 @@ static unsigned int normal_isa_range[] = { SENSORS_ISA_END };
 SENSORS_INSMOD_1(lm77);
 
 /* Whether or not to compile with debugging extensions */
-#define DEBUG 1
-/* #undef DEBUG */
+/* #define DEBUG 1 */
+#undef DEBUG
 
 /* The LM77 registers */
 #define LM77_REG_TEMP 0x00		/* Current temperature (read-only) */
@@ -64,6 +64,11 @@ SENSORS_INSMOD_1(lm77);
 #define LM77_CONF_TCRITPOL 0x4		/* T_CRIT_A polarity */
 #define LM77_CONF_INTPOL 0x8		/* INT polarity */
 #define LM77_CONF_FAULTQ 0x10		/* Fault queue */
+
+/* LM77 alarm bits */
+#define LM77_ALARM_LOW 0x1		/* Alarm for Tlow */
+#define LM77_ALARM_HIGH 0x2		/* Alarm for Thigh */
+#define LM77_ALARM_CRIT 0x4		/* Alarm for Tcrit */
 
 /* LM77 default register values */
 #ifdef DEBUG
@@ -539,8 +544,10 @@ void lm77_proc_alarms(struct i2c_client *client, int operation, int ctl_name,
 		*nrels_mag = 0;
 	else if (operation == SENSORS_PROC_REAL_READ) {
 		lm77_update_client(client);
-		results[0] = data->alarms;
-		*nrels_mag = 1;
+		results[0] = (data->alarms & LM77_ALARM_LOW) ? 1 : 0;
+		results[1] = (data->alarms & LM77_ALARM_HIGH) ? 1 : 0;
+		results[2] = (data->alarms & LM77_ALARM_CRIT) ? 1 : 0;
+		*nrels_mag = 3;
 	}
 }
 
@@ -576,7 +583,8 @@ static int __init sm_lm77_init(void)
 	printk(KERN_INFO "lm77.o version %s (%s+debug)\n", LM_VERSION, LM_DATE);
 #else
 	printk(KERN_INFO "lm77.o version %s (%s)\n", LM_VERSION, LM_DATE);
-#endif	
+#endif
+	printk(KERN_INFO "lm77.o $Id$\n");
 	return i2c_add_driver(&lm77_driver);
 }
 
