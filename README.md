@@ -16,4 +16,4 @@ Please note that I didn't actively work on the driver since years. In particular
 I didn't track changes that might have happened to lm77.c in kernel 2.6 and later.
 You will also be on your own so far regarding the integration of the driver into
 the [lm_sensors](https://en.wikipedia.org/wiki/Lm_sensors) package, but that
-shouldn't be to hard.
+shouldn't be too hard.
