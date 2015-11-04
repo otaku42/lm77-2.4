@@ -1,7 +1,7 @@
 # lm77-2.4
 Backport of lm77.c from kernel 2.6.x to 2.4.x
 
-This is a driver for the LM77 for Linux kernel 2.4, a temperature sensor and
+This is a Linux kernel 2.4 driver for the LM77, a temperature sensor and
 thermal window comparator with 0.5 deg resolution made by National
 Semiconductor. Actually it's a backport of lm77.c from kernel 2.6.
 
